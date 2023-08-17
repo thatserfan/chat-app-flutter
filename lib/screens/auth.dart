@@ -23,6 +23,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredPassword = '';
   File? _selectedImage;
   var _isAuthing = false;
+  var _enteredUsername = '';
 
   void _submit() async {
     final isValid = _form.currentState!.validate();
@@ -58,7 +59,7 @@ class _AuthScreenState extends State<AuthScreen> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
-          'username': 'c',
+          'username': _enteredUsername,
           'email': _enteredEmail,
           'image_url': imageUrl,
         });
@@ -109,6 +110,26 @@ class _AuthScreenState extends State<AuthScreen> {
                           UserImagePicker(
                             onPickedImage: (pikedImage) {
                               _selectedImage = pikedImage;
+                            },
+                          ),
+                        if (!_isLogin)
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Username',
+                            ),
+                            enableSuggestions: false,
+                            autocorrect: false,
+                            textCapitalization: TextCapitalization.none,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.length < 4) {
+                                return 'Please enter valid username (at least 4 charecters).';
+                              }
+                              return null;
+                            },
+                            onSaved: (newValue) {
+                              _enteredUsername = newValue!;
                             },
                           ),
                         TextFormField(
